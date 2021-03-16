@@ -1,0 +1,2 @@
+recursive-include slurmrestapi/templates *
+include slurmrestapi/slurm-web-restapi.wsgi

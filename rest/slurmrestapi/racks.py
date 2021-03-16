@@ -20,8 +20,8 @@
 
 import xml.etree.ElementTree as ET
 from ClusterShell.NodeSet import NodeSet
-from settings import settings
-from ConfigParser import NoOptionError
+from slurmrestapi.settings import settings
+from configparser import NoOptionError
 
 
 class NodeType(object):
