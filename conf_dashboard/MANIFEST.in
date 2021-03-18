@@ -1,0 +1,1 @@
+include slurmconfdashboard/slurm-web-conf.wsgi
