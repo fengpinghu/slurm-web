@@ -18,12 +18,12 @@ Depends:
  ${misc:Depends},
  apache2 | httpd,
  libapache2-mod-wsgi,
- python-flask,
- python-pyslurm (>= 16.05),
+ python3-flask,
+ python3-pyslurm (>= 16.05),
  clustershell,
- python-ldap,
- python-itsdangerous,
- python-redis
+ python3-ldap,
+ python3-itsdangerous,
+ python3-redis
 Description: Slurm Web Python REST API
  Slurm Web backend  REST API developed in Python using Flask web framework.
 
@@ -34,7 +34,7 @@ Depends:
  ${misc:Depends},
  apache2 | httpd,
  libapache2-mod-wsgi,
- python-flask
+ python3-flask
 Description: Slurm Web conf dashboard
  Static Flask server to supply config files for the dashboard
 

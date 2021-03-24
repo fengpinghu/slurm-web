@@ -1,13 +1,24 @@
 #!/usr/bin/make -f
 
 %:
-	dh $@ --with apache2
+	dh $@ --with apache2 --with python3
 
 override_dh_auto_build:
 	uglifyjs -o dashboard/js/libraries/xdomain.min.js dashboard/js/libraries/xdomain.js
 	mkdir -p dashboard/js/fonts
 	nodejs /usr/lib/nodejs/font-converter.js /usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf > dashboard/js/fonts/DejaVuSansMono.typeface.js
+	cd rest && python3 setup.py build
+	cd conf_dashboard && python3 setup.py build
+
+override_dh_install:
+	cd rest && python3 setup.py install --root $$(pwd)/debian/slurm-web/
+	find rest/debian/slurm-web -type d -name dist-packages -exec sh -c 'cp -dr --no-preserve=ownership {}/* debian/slurm-web-restapi/usr/lib/python3/dist-packages/' \;
+	cd conf_dashboard && python3 setup.py install --root $$(pwd)/debian/slurm-web/
+	find conf_dashboard/debian/slurm-web -type d -name dist-packages -exec sh -c 'cp -dr --no-preserve=ownership {}/* debian/slurm-web-confdashboard/usr/lib/python3/dist-packages/' \;
+	dh_install
 
 override_dh_auto_clean:
 	rm -f dashboard/js/libraries/xdomain.min.js
 	rm -rf dashboard/js/fonts
+	rm -rf conf_dashboard/debian
+	rm -rf rest/debian
