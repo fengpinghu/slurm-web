@@ -21,37 +21,32 @@
 import sys
 import os
 from subprocess import Popen
-import SimpleHTTPServer
-import SocketServer
+import http.server
+import socketserver
 import requests
 
 host = '0.0.0.0'
 
 tests_dir     = os.path.abspath(os.path.join(
-                    os.path.realpath(__file__), '..'))
+                    os.path.realpath(__file__), '../..'))
 dashboard_dir = os.path.abspath(os.path.join(
-                    os.path.realpath(__file__), '../../dashboard'))
-backend_dir   = os.path.abspath(os.path.join(
-                    os.path.realpath(__file__), '../../dashboard/backend'))
-rest_dir      = os.path.abspath(os.path.join(
-                    os.path.realpath(__file__), '../../rest/'))
-
-os.environ['PYTHONPATH'] = "%s:%s:%s" % (backend_dir, rest_dir, tests_dir)
+                    os.path.realpath(__file__), '../../../dashboard'))
+os.environ['PYTHONPATH'] = "%s" % (tests_dir)
 
 port = 2000
-cmd = [ 'python', 'tests/run-app.py', '--debug',
+cmd = [ 'python', 'tests/slurmwebtests/run-app.py', '--debug',
         '--app', 'rest', '--setup', 'saturne',
         '--host', host, '--port', str(port) ]
 p1 = Popen(cmd, stdout=sys.stdout, stderr=sys.stderr)
 
 port = 2001
-cmd = [ 'python', 'tests/run-app.py', '--debug',
+cmd = [ 'python', 'tests/slurmwebtests/run-app.py', '--debug',
         '--app', 'rest', '--setup', 'jupiter',
         '--host', host, '--port', str(port) ]
 p1 = Popen(cmd, stdout=sys.stdout, stderr=sys.stderr)
 
 port = 2010
-cmd = [ 'python', 'tests/run-app.py', '--debug',
+cmd = [ 'python', 'tests/slurmwebtests/run-app.py', '--debug',
         '--app', 'conf', '--host', host, '--port', str(port) ]
 p2 = Popen(cmd, stdout=sys.stdout, stderr=sys.stderr)
 
@@ -64,7 +59,7 @@ def extract_ip_from_httphost(host):
         return host_m[0]
     return host
 
-class MyRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
+class MyRequestHandler(http.server.SimpleHTTPRequestHandler):
 
     def do_GET(self):
         if self.path == '/':
@@ -108,12 +103,12 @@ class MyRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
         elif self.path.startswith('/slurm-restapi'):
             path = "/".join(self.path.split('/')[2:])
             ipaddr = extract_ip_from_httphost(self.headers['Host'])
-            print "API path: %s" % (path)
+            print("API path: %s" % (path))
             self.send_response(301)
             self.send_header('Location',"http://%s:2000/%s" % (ipaddr, path))
             self.end_headers()
             return
-        return SimpleHTTPServer.SimpleHTTPRequestHandler.do_GET(self)
+        return http.server.SimpleHTTPRequestHandler.do_GET(self)
 
     def do_POST(self):
         if self.path.startswith('/slurm-restapi'):
@@ -126,7 +121,7 @@ class MyRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
             return
 
 Handler = MyRequestHandler
-server = SocketServer.TCPServer(('0.0.0.0', 8080), Handler)
+server = socketserver.TCPServer(('0.0.0.0', 8080), Handler)
 server.serve_forever()
 
 #p1.wait()
