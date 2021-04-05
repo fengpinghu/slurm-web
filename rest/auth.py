@@ -201,9 +201,16 @@ class User(object):
         try:
             base_people = settings.get('ldap', 'base_people')
             base_group = settings.get('ldap', 'base_group')
+            binddn = settings.get('ldap', 'bindDN')
+            bindpw = settings.get('ldap', 'bindPW')
+
+            conn.simple_bind_s(binddn,bindpw)
+            query="(uid=%s)" % login
+            result=conn.search_s(ldap_base, ldap.SCOPE_SUBTREE, query,['pid'])
+            user_dn,pid=result[0]
 
             # authenticate user on ldap
-            user_dn = "uid=%s,%s" % (login, base_people)
+            #user_dn = "uid=%s,%s" % (login, base_people)
             conn.simple_bind_s(user_dn, password)
 
             print "User %s authenticated" % login
