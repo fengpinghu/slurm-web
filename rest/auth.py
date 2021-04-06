@@ -107,7 +107,7 @@ def get_ldap_connection():
     conn = ldap.initialize(uri)
 
     # LDAP/SSL setup
-    if uri.startswith('ldaps'):
+    if uri.startswith('ldaps-disabled'):
 
         conn.protocol_version = ldap.VERSION3
         # Force cert validation
@@ -201,19 +201,30 @@ class User(object):
         try:
             base_people = settings.get('ldap', 'base_people')
             base_group = settings.get('ldap', 'base_group')
+            binddn = settings.get('ldap', 'bindDN')
+            bindpw = settings.get('ldap', 'bindPW')
+
+            conn.simple_bind_s(binddn,bindpw)
+            query="(uid=%s)" % login
+            result=conn.search_s(base_people, ldap.SCOPE_SUBTREE, query,['pid'])
+            user_dn,pid=result[0]
 
             # authenticate user on ldap
-            user_dn = "uid=%s,%s" % (login, base_people)
+            #user_dn = "uid=%s,%s" % (login, base_people)
             conn.simple_bind_s(user_dn, password)
 
             print "User %s authenticated" % login
+            #return 'all'
+
+            look_filter = "(&(objectclass=posixGroup)(|(cn=rc_dom_*)(cn=rc_*_pi)" \
+                    "(cn=rc_*_psx)(cn=its_*_psx))(memberUid=%s))" % login
 
             # search for user's groups
-            look_filter = "(|(&(objectClass=*)(member=%s)))" % (user_dn)
+            #look_filter = "(|(&(objectClass=*)(member=%s)))" % (user_dn)
             results = conn.search_s(base_group,
                                     ldap.SCOPE_SUBTREE,
                                     look_filter, ['cn'])
-            groups = [result[1]['cn'][0] for result in results]
+            groups = [result[1]['cn'][0].decode("utf-8")  for result in results]
             return groups
 
         except ldap.SERVER_DOWN:
