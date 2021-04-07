@@ -67,7 +67,7 @@ RUN cd /usr/src  && \
     make && \
     make contrib && \
     # a workaround for undefined symbled issue, 01/22/2019
-    gcc -shared  -fPIC -DPIC  /usr/src/slurm-20.02.5/src/plugins/accounting_storage/slurmdbd/.libs/accounting_storage_slurmdbd.o /usr/src/slurm-20.02.5/src/plugins/accounting_storage/slurmdbd/.libs/slurmdbd_agent.o   /usr/src/slurm-20.02.5/src/common/.libs/*.o   -g -O2 -pthread -ggdb3 -g -O1   -pthread -Wl,-soname -Wl,accounting_storage_slurmdbd.so -o /usr/src/slurm-20.02.5/src/plugins/accounting_storage/slurmdbd/.libs/accounting_storage_slurmdbd.so && \
+    #gcc -shared  -fPIC -DPIC  /usr/src/slurm-20.02.5/src/plugins/accounting_storage/slurmdbd/.libs/accounting_storage_slurmdbd.o /usr/src/slurm-20.02.5/src/plugins/accounting_storage/slurmdbd/.libs/slurmdbd_agent.o   /usr/src/slurm-20.02.5/src/common/.libs/*.o   -g -O2 -pthread -ggdb3 -g -O1   -pthread -Wl,-soname -Wl,accounting_storage_slurmdbd.so -o /usr/src/slurm-20.02.5/src/plugins/accounting_storage/slurmdbd/.libs/accounting_storage_slurmdbd.so && \
     make install  && \
     cd .. && \
     fpm -s dir -t deb -v 1.0 -n slurm-20.02.5  --prefix=/usr -C /tmp/slurm-build . && \
