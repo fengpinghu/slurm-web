@@ -251,6 +251,7 @@ def convert_tres_ids(numerical_tres):
                  TRES_MEM,
                  TRES_ENERGY,
                  TRES_NODE,
+                 TRES_GPU = 1001,
                  TRES_STATIC_CNT
          } tres_types_t;
 
@@ -264,7 +265,8 @@ def convert_tres_ids(numerical_tres):
         '1': 'cpu',
         '2': 'mem',
         '3': 'energy',
-        '4': 'node'}
+        '4': 'node',
+        '1001': 'gpu'}
     tres_l = list()
     tres_e = numerical_tres.split(',')
     for tres in tres_e:
